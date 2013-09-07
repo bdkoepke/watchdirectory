@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+	<sources>
+    <source>
+        <name>tmp1</name>
+				<path>/home/brandon/tmp1</path>
+        <recursive>true</recursive>
+    </source>
+    <source>
+        <name>tmp2</name>
+				<path>/home/brandon/tmp2</path>
+        <recursive>true</recursive>
+		</source>
+    <source>
+        <name>tmp3</name>
+				<path>/home/brandon/tmp3</path>
+		</source>
+	</sources>
+  <watchEventObserver xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="printlnWatchEventObserver"/>
+</configuration>

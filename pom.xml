@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>pw.swordfish</groupId>
-	<artifactId>directorywatcher</artifactId>
+	<artifactId>watchdirectory</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
 
-	<name>directorywatcher</name>
+	<name>watchdirectory</name>
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>

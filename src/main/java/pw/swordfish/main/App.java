@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import pw.swordfish.base.ExceptionHandler;
+import pw.swordfish.lang.ExceptionHandler;
 import pw.swordfish.io.WatchDirectory;
 import pw.swordfish.prefs.Configuration;
 import pw.swordfish.prefs.Source;
@@ -51,7 +51,7 @@ public class App implements Runnable {
 	private void _run() throws JAXBException, IOException {
 		XmlContext<Configuration> context = XmlContext.<Configuration>builder()
 				.setMarshallerProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
-				.build(Configuration.class, PrintlnWatchEventObserver.class);
+				.build(Configuration.class);
 
 		Configuration configuration = context.unmarshall(new FileInputStream("configuration.xml"));
 

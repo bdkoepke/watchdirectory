@@ -42,10 +42,10 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<!--<plugin>
+			<plugin>
 				<groupId>types.checkers</groupId>
 				<artifactId>checkers-maven-plugin</artifactId>
-				<version>1.6.6</version>
+				<version>1.6.7</version>
 				<executions>
 					<execution>
 						<phase>process-classes</phase>
@@ -60,7 +60,7 @@
 						<processor>checkers.interning.InterningChecker</processor>
 					</processors>
 				</configuration>
-			</plugin>-->
+			</plugin>
 		</plugins>
 	</build>
 	<properties>
@@ -69,6 +69,11 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.2.5.Final</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -81,20 +86,15 @@
 			<version>14.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>types.checkers</groupId>
-			<artifactId>checkers-quals</artifactId>
-			<version>1.6.6</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.1</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>com.netflix.rxjava</groupId>
-			<artifactId>rxjava-core</artifactId>
-			<version>0.10.1</version>
+			<groupId>types.checkers</groupId>
+			<artifactId>checkers-quals</artifactId>
+			<version>1.6.7</version>
 		</dependency>
 	</dependencies>
 	<repositories>

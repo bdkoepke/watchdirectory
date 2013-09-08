@@ -25,7 +25,7 @@ public abstract class AbstractObservable<T> implements Observable<T> {
 
 	@Override
 	public AutoCloseable subscribe(final Observer<T> observer) {
-		this._observers.add(observer);
+		_observers.add(observer);
 		return new AutoCloseable() {
 			@Override
 			public void close() throws Exception {

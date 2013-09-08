@@ -14,16 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pw.swordfish.base;
+package pw.swordfish.lang;
 
 /**
- * Generic interface for the builder pattern.
  * @author Brandon Koepke
  */
-public interface Builder<T> {
+public interface ExceptionHandler<T extends Exception> {
 	/**
-	 * Returns a new instance of type T
-	 * @return An instance of type T
+	 * Handles the specified exception.
+	 * @param exception the exception to handle.
 	 */
-	public T build();
+	void handle(T exception);
 }

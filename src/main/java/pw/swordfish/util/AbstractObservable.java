@@ -17,6 +17,7 @@
 package pw.swordfish.util;
 
 import com.google.common.collect.Sets;
+import java.util.Collections;
 import java.util.Set;
 
 public abstract class AbstractObservable<T> implements Observable<T> {
@@ -33,8 +34,7 @@ public abstract class AbstractObservable<T> implements Observable<T> {
 		};
 	}
 
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected Iterable<Observer<T>> getObservers() {
-		return _observers;
+		return Collections.unmodifiableSet(_observers);
 	}
 }

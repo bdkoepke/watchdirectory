@@ -32,8 +32,6 @@ import java.util.Map;
 import static java.nio.file.StandardWatchEventKinds.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pw.swordfish.util.AbstractObservable;
 import pw.swordfish.util.Observer;
 import pw.swordfish.validation.ConstraintViolation;
@@ -50,7 +48,6 @@ import pw.swordfish.validation.Validators;
 public class WatchDirectory extends AbstractObservable<WatchEvent<Path>> implements Runnable {
 
 	private static final Validator<File> DIRECTORY_VALIDATOR = new DirectoryValidator();
-	private static final Logger LOGGER = Logger.getLogger(WatchDirectory.class.getName());
 	//private static final WatchEvent.Kind<Path>[] WATCH_EVENTS;
 	private final WatchService _watchService;
 	private final Map<WatchKey, Path> _keys;
@@ -88,6 +85,12 @@ public class WatchDirectory extends AbstractObservable<WatchEvent<Path>> impleme
 		}
 	}
 
+	private void onError(Exception error) {
+		for (Observer<WatchEvent<Path>> observer : getObservers()) {
+			observer.onError(error);
+		}
+	}
+
 	@Override
 	public void run() {
 		for (;;) {
@@ -95,13 +98,13 @@ public class WatchDirectory extends AbstractObservable<WatchEvent<Path>> impleme
 			try {
 				key = _watchService.take();
 			} catch (InterruptedException ex) {
-				LOGGER.log(Level.SEVERE, "Watch service interrupted while attempting to fetch key", ex);
+				onError(ex);
 				continue;
 			}
 
 			Path directory = _keys.get(key);
 			if (directory == null) {
-				LOGGER.log(Level.SEVERE, "WatchKey not recognized!");
+				onError(new NullPointerException("WatchKey not recognized!"));
 				continue;
 			}
 
@@ -117,7 +120,10 @@ public class WatchDirectory extends AbstractObservable<WatchEvent<Path>> impleme
 		Set<ConstraintViolation<File>> violations = DIRECTORY_VALIDATOR.validate(start.toFile());
 		if (Validators.failure(violations)) {
 			for (ConstraintViolation<File> violation : violations) {
-				LOGGER.log(Level.INFO, violation.getMessage(), violation.getError().isPresent() ? violation.getError().get() : null);
+				Exception error = violation.getError().isPresent() ?
+						violation.getError().get() : 
+						new Exception(violation.getMessage());
+				onError(error);
 			}
 		} else {
 			Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
@@ -170,7 +176,7 @@ public class WatchDirectory extends AbstractObservable<WatchEvent<Path>> impleme
 			try {
 				registerAll(child);
 			} catch (IOException ex) {
-				LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+				onError(ex);
 			}
 		}
 	}

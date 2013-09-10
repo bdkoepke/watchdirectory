@@ -16,12 +16,10 @@
  */
 package pw.swordfish.prefs;
 
-import com.google.common.collect.ImmutableSet;
-import java.util.Collections;
-import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import pw.swordfish.main.WatchEventObserver;
+import static checkers.nullness.NullnessUtils.castNonNull;
 
 /**
  * Container for various configuration items.
@@ -30,13 +28,11 @@ import pw.swordfish.main.WatchEventObserver;
 @XmlRootElement(name = "configuration")
 public class Configuration {
 	@XmlElement(name = "sources")
-	private final Sources _sources;
+	private Sources _sources;
 	@XmlElement(name = "watchEventObserver")
-	private final WatchEventObserver _watchEventObserver;
+	private WatchEventObserver _watchEventObserver;
 
-	private Configuration() {
-		this(null, null);
-	}
+	private Configuration() {}
 
 	private Configuration(Sources sources, WatchEventObserver watchEventObserver) {
 		_sources = sources;
@@ -53,22 +49,19 @@ public class Configuration {
 		return new Configuration(sources, watchEventObserver);
 	}
 
-	/**
-	 * Creates a new configuration.
-	 * @param sources the set of folder sources to watch, this is copied
-	 * and a new instance is created.
-	 * @param visitor the file visitor to invoke when there is a
-	 * FileSystem change.
-	 */
-	public static Configuration of(Iterable<Source> sources, WatchEventObserver watchEventObserver) {
-		return of(ImmutableSet.copyOf(sources), watchEventObserver);
-	}
-
 	public Sources getSources() {
-		return _sources;
+		return castNonNull(_sources);
 	}
 
 	public WatchEventObserver getWatchEventObserver() {
-		return _watchEventObserver;
+		return castNonNull(_watchEventObserver);
+	}
+
+	public void setSources(Sources sources) {
+		_sources = castNonNull(sources);
+	}
+
+	public void setWatchEventObserver(WatchEventObserver watchEventObserver) {
+		_watchEventObserver = castNonNull(watchEventObserver);
 	}
 }

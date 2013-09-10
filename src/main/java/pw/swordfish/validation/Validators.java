@@ -16,17 +16,15 @@
  */
 package pw.swordfish.validation;
 
-import java.util.Set;
+import java.io.File;
 
 /**
  * @author Brandon Koepke
  */
 public class Validators {
-	public static <T> boolean success(Set<ConstraintViolation<T>> violations) {
-		return violations.isEmpty();
-	}
+	private static final Validator<File> DIRECTORY_VALIDATOR = new DirectoryValidator();
 
-	public static <T> boolean failure(Set<ConstraintViolation<T>> violations) {
-		return ! success(violations);
+	public static Validator<File> getDirectoryValidator() {
+		return DIRECTORY_VALIDATOR;
 	}
 }

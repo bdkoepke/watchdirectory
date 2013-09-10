@@ -29,6 +29,9 @@ public class Arrays {
 	private Arrays() {
 	}
 
+	/**
+	 * Workaround for type erasure.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] newArray(Class<T> componentType, int length) {
 		return (T[]) Array.newInstance(componentType, length);

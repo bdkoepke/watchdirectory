@@ -44,6 +44,7 @@ public class Process {
 		return Runtime.getRuntime().exec(getCommandArray());
 	}
 
+	@SuppressWarnings("PublicInnerClass")
 	public static class Builder {
 		private final ImmutableList.Builder<String> argumentsBuilder = ImmutableList.builder();
 		private Builder() {}

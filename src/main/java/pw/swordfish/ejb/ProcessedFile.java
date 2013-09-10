@@ -26,10 +26,6 @@ import java.io.File;
 public class ProcessedFile {
 	private final String _path;
 	private boolean _processed;
-	/**
-	 * Creates a new lazily initialized file. (This is duplicated from Source because
-	 * we have to create a closure based on the local path)
-	 */
 	private final Supplier<File> _file = Suppliers.memoize(new Supplier<File>() {
 		@Override
 		public File get() {
@@ -37,7 +33,7 @@ public class ProcessedFile {
 		}
 	});
 
-	private ProcessedFile() { this(null); }
+	private ProcessedFile() { this(""); }
 
 	private ProcessedFile(String path) {
 		_path = path;

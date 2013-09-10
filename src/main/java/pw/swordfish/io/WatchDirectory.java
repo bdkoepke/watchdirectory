@@ -31,13 +31,12 @@ import java.nio.file.WatchService;
 import java.util.Map;
 import static java.nio.file.StandardWatchEventKinds.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Set;
 import pw.swordfish.util.AbstractObservable;
 import pw.swordfish.util.Observer;
 import pw.swordfish.validation.ConstraintViolation;
-import pw.swordfish.main.DirectoryValidator;
 import pw.swordfish.validation.Validator;
 import pw.swordfish.validation.Validators;
+import pw.swordfish.validation.Violations;
 
 /**
  * Observable that watches a directory and returns FileSystem events when they
@@ -47,7 +46,7 @@ import pw.swordfish.validation.Validators;
  */
 public class WatchDirectory extends AbstractObservable<WatchEvent<Path>> implements Runnable {
 
-	private static final Validator<File> DIRECTORY_VALIDATOR = new DirectoryValidator();
+	private static final Validator<File> DIRECTORY_VALIDATOR = Validators.getDirectoryValidator();
 	//private static final WatchEvent.Kind<Path>[] WATCH_EVENTS;
 	private final WatchService _watchService;
 	private final Map<WatchKey, Path> _keys;
@@ -117,8 +116,8 @@ public class WatchDirectory extends AbstractObservable<WatchEvent<Path>> impleme
 	}
 
 	private void registerAll(Path start) throws IOException {
-		Set<ConstraintViolation<File>> violations = DIRECTORY_VALIDATOR.validate(start.toFile());
-		if (Validators.failure(violations)) {
+		Violations<File> violations = DIRECTORY_VALIDATOR.validate(start.toFile());
+		if (violations.hasViolations()) {
 			for (ConstraintViolation<File> violation : violations) {
 				Exception error = violation.getError().isPresent() ?
 						violation.getError().get() : 

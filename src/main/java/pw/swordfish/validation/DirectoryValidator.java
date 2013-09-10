@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pw.swordfish.main;
+package pw.swordfish.validation;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
@@ -24,11 +24,8 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
-import java.util.Set;
-import pw.swordfish.validation.ConstraintViolation;
-import pw.swordfish.validation.Validator;
 
-public class DirectoryValidator implements Validator<File> {
+class DirectoryValidator implements Validator<File> {
 	private class DirectoryConstraintValidation implements ConstraintViolation<File> {
 		private final File _invalidValue;
 		private final String _message;
@@ -55,8 +52,7 @@ public class DirectoryValidator implements Validator<File> {
 		}
 	}
 
-	@Override
-	public Set<ConstraintViolation<File>> validate(File file) {
+	private ImmutableSet<ConstraintViolation<File>> getValidationsSet(File file) {
 		ImmutableSet.Builder<ConstraintViolation<File>> constraintBuilder = ImmutableSet.builder();
 		Path path = file.toPath();
 		if (! Files.exists(path)) {
@@ -70,5 +66,10 @@ public class DirectoryValidator implements Validator<File> {
 			constraintBuilder.add(new DirectoryConstraintValidation(file, "Access denied " + path.toString(), new AccessDeniedException(path.toString())));
 		}
 		return constraintBuilder.build();
+	}
+		
+	@Override
+	public Violations<File> validate(File file) {
+		return Violations.of(getValidationsSet(file));
 	}
 }

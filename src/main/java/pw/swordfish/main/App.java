@@ -1,7 +1,6 @@
 package pw.swordfish.main;
 
 import com.google.common.collect.ImmutableSet;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Set;
@@ -13,8 +12,6 @@ import pw.swordfish.lang.ExceptionHandler;
 import pw.swordfish.io.WatchDirectory;
 import pw.swordfish.prefs.Configuration;
 import pw.swordfish.prefs.Source;
-import pw.swordfish.validation.ConstraintViolation;
-import pw.swordfish.validation.Validators;
 
 public class App implements Runnable {
 
@@ -24,46 +21,26 @@ public class App implements Runnable {
 		private final Level _level = Level.SEVERE;
 		@Override
 		public void handle(Exception exception) {
-			LOGGER.log(_level, null, exception);
+			LOGGER.log(_level, exception.getMessage(), exception);
 			System.exit(EXIT_STATUS);
 		}
 	};
 
-	private void validateSources(Set<Source> sources) {
-		boolean isError = false;
-		for (Source source : sources) {
-			File file = source.getFile();
-			DirectoryValidator validator = new DirectoryValidator();
-
-			Set<ConstraintViolation<File>> violations = validator.validate(file);
-			if (Validators.failure(violations)) {
-				isError = true;
-				for (ConstraintViolation<File> violation : violations) {
-					LOGGER.log(Level.SEVERE, violation.getMessage());
-				}
-			}
-		}
-		if (isError) {
-			System.exit(EXIT_STATUS);
-		}
-	}
-
 	private void _run() throws JAXBException, IOException {
 		XmlContext<Configuration> context = XmlContext.<Configuration>builder()
 				.setMarshallerProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
-				.build(Configuration.class);
+				.build(Configuration.class, PrintlnWatchEventObserver.class);
 
 		Configuration configuration = context.unmarshall(new FileInputStream("configuration.xml"));
 
 		WatchEventObserver watchEventObserver = configuration.getWatchEventObserver();
 
 		Set<Source> sources = configuration.getSources().get();
-		validateSources(sources);
 
 		ImmutableSet.Builder<Thread> threads = ImmutableSet.builder();
 		for (Source source : sources) {
 			final WatchDirectory watchDirectory = WatchDirectory.of(source.isRecursive());
-			watchDirectory.register(source.getFile().toPath());
+			watchDirectory.register(source.getDirectory().toPath());
 			watchDirectory.subscribe(watchEventObserver);
 			threads.add(new Thread() {
 				@Override

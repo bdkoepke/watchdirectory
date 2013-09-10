@@ -16,68 +16,58 @@
  */
 package pw.swordfish.prefs;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import java.io.File;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import pw.swordfish.validation.Validator;
+import pw.swordfish.validation.Validators;
+import pw.swordfish.validation.Violations;
 
 /**
  * @author Brandon Koepke
  */
 @XmlRootElement(name = "source")
 public class Source {
-	@XmlElement(name = "name", required = true)
-	private final String _name;
-	@XmlElement(name = "path", required = true)
-	private final String _path;
+	private static final Validator<File> DIRECTORY_VALIDATOR = Validators.getDirectoryValidator();
+
+	@XmlElement(name = "name")
+	private String _name;
 	@XmlElement(name = "recursive", required = false)
-	private final boolean _recursive;
-	/**
-	 * We have to lazily initialize the file from the path due to
-	 * the way that serialization works. Pretty sure there is something
-	 * in Effective Java about this, but this is just for personal use
-	 * anyway...
-	 */
-	private final Supplier<File> _file = Suppliers.memoize(new Supplier<File>() {
-		@Override
-		public File get() {
-			return new File(_path);
-		}
-	});
+	private boolean _recursive;
+	@XmlElement(name = "path")
+	private File _file;
 
-	private Source() {
-		this(null, null, false);
-	}
+	private Source() {}
 
-	private Source(String name, String path, boolean recursive) {
+	private Source(String name, File file, boolean recursive) {
 		_name = name;
-		_path = path;
+		_file = file;
 		_recursive = recursive;
 	}
 
 	/**
 	 * Creates a new source path.
 	 * @param name the name of the path.
-	 * @param path the actual path.
+	 * @param file the file for this source.
 	 * @param recursive true if the path should be recursively
 	 * enumerated, false otherwise.
 	 * @return a new source.
 	 */
-	public static Source of(String name, String path, boolean recursive) {
-		return new Source(name, path, recursive);
+	public static Source of(String name, File file, boolean recursive) {
+		Violations<File> violations = DIRECTORY_VALIDATOR.validate(file);
+		return new Source(name, file, recursive);
 	}
 
 	/**
 	 * Creates a new non-recursive source path.
 	 * @param name the name of the path.
-	 * @param path the actual path.
+	 * @param file the file for this source.
 	 * @return a new source.
 	 */
-	public static Source of(String name, String path) {
-		return new Source(name, path, false);
+	public static Source of(String name, File file) {
+		return of(name, file, false);
 	}
 
 	/**
@@ -90,8 +80,8 @@ public class Source {
 	/**
 	 * The file of the source
 	 */
-	public File getFile() {
-		return _file.get();
+	public File getDirectory() {
+		return _file;
 	}
 
 	/**

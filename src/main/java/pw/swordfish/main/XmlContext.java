@@ -25,6 +25,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import pw.swordfish.lang.Arrays;
+import pw.swordfish.prefs.Configuration;
 
 /**
  * @author Brandon Koepke

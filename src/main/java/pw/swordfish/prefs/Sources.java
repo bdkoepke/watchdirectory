@@ -18,34 +18,34 @@ package pw.swordfish.prefs;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
  * @author Brandon Koepke
  */
 @XmlRootElement(name = "sources")
 public class Sources implements Supplier<Set<Source>> {
 	@XmlElement(name = "source", type = Source.class)
-	private Set<Source> _sources;
+	private final Set<Source> _sources;
 
 	private Sources() {
-		this(null);
+		this(Sets.<Source>newHashSet());
 	}
 
 	private Sources(Set<Source> sources) {
 		_sources = sources;
 	}
 
-	public static Sources of(ImmutableSet<Source> sources) {
+	public static Sources of(Set<Source> sources) {
 		return new Sources(sources);
 	}
 
 	public static Sources of(Iterable<Source> sources) {
-		return of(ImmutableSet.copyOf(sources));
+		return of(Sets.newHashSet(sources));
 	}
 
 	@Override

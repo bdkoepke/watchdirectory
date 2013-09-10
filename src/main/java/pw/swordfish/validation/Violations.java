@@ -16,14 +16,35 @@
  */
 package pw.swordfish.validation;
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
+ *
  * @author Brandon Koepke
  */
-public interface Validator<T> {
-	/**
-	 * Validates the specified item.
-	 * @param item the item to validate.
-	 * @return a set of constraint violations, if there are any.
-	 */
-	Violations<T> validate(T item);
+public class Violations<T> implements Iterable<ConstraintViolation<T>>{
+	private final Set<ConstraintViolation<T>> _violations;
+
+	private Violations(Set<ConstraintViolation<T>> violations) {
+		_violations = violations;
+	}
+
+	public static <T> Violations<T> of(Iterable<ConstraintViolation<T>> violations) {
+		return of(ImmutableSet.copyOf(violations));
+	}
+
+	public static <T> Violations<T> of(ImmutableSet<ConstraintViolation<T>> violations) {
+		return new Violations<>(violations);
+	}
+		
+	@Override
+	public Iterator<ConstraintViolation<T>> iterator() {
+		return _violations.iterator();
+	}
+
+	public boolean hasViolations() {
+		return ! _violations.isEmpty();
+	}
 }

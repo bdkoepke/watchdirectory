@@ -37,7 +37,7 @@ public class Process {
 	}
 
 	private String[] getCommandArray() {
-		return Arrays.prepend(_command, _arguments);
+		return Arrays.prepend(String.class, _command, _arguments);
 	}
 
 	public java.lang.Process run() throws IOException {

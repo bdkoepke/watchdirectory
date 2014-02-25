@@ -17,7 +17,6 @@
 package pw.swordfish.prefs;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.Set;

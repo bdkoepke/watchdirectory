@@ -1,5 +1,6 @@
 package pw.swordfish.main;
 
+import pw.swordfish.xml.XmlContext;
 import com.google.common.collect.ImmutableSet;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import pw.swordfish.lang.ExceptionHandler;
 import pw.swordfish.io.WatchDirectory;
 import pw.swordfish.prefs.Configuration;
 import pw.swordfish.prefs.Source;
@@ -17,14 +17,6 @@ public class App implements Runnable {
 
 	private static final Logger LOGGER = Logger.getLogger(App.class.getName());
 	private static final int EXIT_STATUS = 1;
-	private static ExceptionHandler<Exception> APP_EXCEPTION_HANDLER = new ExceptionHandler<Exception>() {
-		private final Level _level = Level.SEVERE;
-		@Override
-		public void handle(Exception exception) {
-			LOGGER.log(_level, exception.getMessage(), exception);
-			System.exit(EXIT_STATUS);
-		}
-	};
 
 	private void _run() throws JAXBException, IOException {
 		XmlContext<Configuration> context = XmlContext.<Configuration>builder()
@@ -55,17 +47,14 @@ public class App implements Runnable {
 		}
 	}
 
-	public void run(ExceptionHandler<Exception> handler) {
+	@Override
+	public void run() {
 		try {
 			_run();
 		} catch (JAXBException | IOException ex) {
-			handler.handle(ex);
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			System.exit(EXIT_STATUS);
 		}
-	}
-
-	@Override
-	public void run() {
-		run(APP_EXCEPTION_HANDLER);
 	}
 
 	public static void main(String... args) throws IOException, JAXBException {
